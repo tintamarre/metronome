@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="200">
+
+  <!-- Définition de la ligne -->
+  <line id="main_line" x1="50" y1="100" x2="350" y2="100" stroke="#ccc" stroke-width="1">
+    <animate id="line1a1" attributeName="x2" from="50" to="150" dur="500ms" fill="freeze" begin="0ms;line1a4.end" />
+    <animate id="line1a2" attributeName="x2" from="150" to="250" dur="500ms" fill="freeze" begin="line1a1.end" />
+    <animate id="line1a3" attributeName="x2" from="250" to="350" dur="500ms" fill="freeze" begin="line1a2.end" />
+    <animate id="line1a4" attributeName="x2" from="350" to="450" dur="500ms" fill="freeze" begin="line1a3.end" />
+  </line>
+
+  <!-- Définition des cercles -->
+  <circle id="circle1" cx="50" cy="100" r="20" fill="#e76f51">
+  </circle>
+
+  <circle id="circle2" cx="150" cy="100" r="20" fill="white">
+    <animate id="c2f1" attributeName="fill" begin="line1a1.end" from="#fff" to="#2a9d8f" dur="1ms" />
+    <animate id="c2f2" attributeName="fill" begin="c2f1.end" from="#2a9d8f" to="#2a9d8f" dur="1499ms" />
+  </circle>
+
+  <circle id="circle3" cx="250" cy="100" r="20" fill="white">
+    <animate id="c3f1" attributeName="fill" begin="line1a2.end" from="#fff" to="#2a9d8f" dur="1ms" />
+    <animate id="c3f2" attributeName="fill" begin="c3f1.end" from="#2a9d8f" to="#2a9d8f" dur="999ms" />
+  </circle>
+
+  <circle id="circle4" cx="350" cy="100" r="20" fill="white">
+      <animate id="c4f1" attributeName="fill" begin="line1a3.end" from="#fff" to="#2a9d8f" dur="1ms" />
+        <animate id="c4f2" attributeName="fill" begin="c4f1.end" from="#2a9d8f" to="#2a9d8f" dur="499ms" />
+  </circle>
+
+  <line id="end_line" x1="450" y1="90" x2="450" y2="110" stroke="#ccc" stroke-width="2">
+  </line>
+
+</svg>
