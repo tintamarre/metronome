@@ -9,7 +9,7 @@ class BeepGenerator:
         # disk instead of buffering it all in memory list this.  But most sounds will fit in 
         # memory.
         self.audio = []
-        self.sample_rate = 44100.0
+        self.sample_rate = 8000.0
 
     def append_silence(self, duration_milliseconds=500):
         """

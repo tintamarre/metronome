@@ -3,6 +3,7 @@ import time
 import base64
 
 import main_lib as lib
+import svg_lib as svg
 import audio_lib as audio
 
 st.set_page_config(page_title="Metronome")
@@ -12,7 +13,7 @@ st.sidebar.title("Settings")
 
 bpm = st.sidebar.slider("BPM", min_value=40, max_value=208, value=120, step=1)
 
-st.sidebar.write(f"Current BPM: {bpm} (**{lib.get_bpm_name(bpm)}**)")
+st.metric(f"{lib.get_bpm_name(bpm)}", f"{bpm}")
 
 beats = st.sidebar.slider("Beats", min_value=1, max_value=8, value=4, step=1)
 
@@ -47,9 +48,8 @@ if start:
     total_duration = ms * beats / 1000    
 
     audio.BeepGenerator().generate_beep(ms, beats)
-    lib.generate_svg(beats, bpm)
+    svg.generate_svg(ms, beats, bpm)
     
-
     time.sleep(0.5)
 
     display_metronome("./tmp/output.wav", "./output.svg")
