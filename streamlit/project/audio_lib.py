@@ -9,7 +9,7 @@ class BeepGenerator:
         # disk instead of buffering it all in memory list this.  But most sounds will fit in 
         # memory.
         self.audio = []
-        self.sample_rate = 8000.0
+        self.sample_rate = 44100.0  # CD quality for better click sounds
 
     def append_silence(self, duration_milliseconds=500):
         """
@@ -31,7 +31,7 @@ class BeepGenerator:
         The sine wave generated here is the standard beep.  If you want something
         more aggressive you could try a square or saw tooth waveform.   Though there
         are some rather complicated issues with making high quality square and
-        sawtooth waves... which we won't address here :) 
+        sawtooth waves... which we won't address here :)
         """
 
         num_samples = duration_milliseconds * (self.sample_rate / 1000.0)
@@ -41,6 +41,50 @@ class BeepGenerator:
         sine_wave = volume * np.sin(2 * np.pi * freq * (x / self.sample_rate))
 
         self.audio.extend(list(sine_wave))
+        return
+
+    def append_click(self, duration_milliseconds=30, volume=1.0, is_accent=False):
+        """
+        Generates a realistic mechanical metronome click sound.
+        Uses a combination of:
+        - Sharp attack with exponential decay
+        - Multiple frequency components for wooden/mechanical character
+        - Filtered noise for the percussive "knock" quality
+        """
+        num_samples = int(duration_milliseconds * (self.sample_rate / 1000.0))
+        t = np.arange(num_samples) / self.sample_rate
+
+        # Exponential decay envelope (fast attack, quick decay)
+        decay_rate = 150 if is_accent else 200
+        envelope = np.exp(-decay_rate * t)
+
+        # Primary click frequencies (wood-like resonance)
+        if is_accent:
+            # Higher, brighter accent click
+            freqs = [1800, 2400, 3200, 4000]
+            weights = [1.0, 0.6, 0.3, 0.15]
+        else:
+            # Lower, softer regular click
+            freqs = [1200, 1800, 2400, 3000]
+            weights = [1.0, 0.5, 0.25, 0.1]
+
+        # Generate tonal components
+        click = np.zeros(num_samples)
+        for freq, weight in zip(freqs, weights):
+            click += weight * np.sin(2 * np.pi * freq * t)
+
+        # Add subtle noise burst for realistic attack
+        noise = np.random.uniform(-0.3, 0.3, num_samples)
+        noise_envelope = np.exp(-300 * t)  # Very fast decay for noise
+        click += noise * noise_envelope
+
+        # Apply main envelope
+        click = click * envelope
+
+        # Normalize and apply volume
+        click = click / np.max(np.abs(click)) * volume
+
+        self.audio.extend(list(click))
         return
 
     def append_sinewaves(
@@ -91,17 +135,14 @@ class BeepGenerator:
         return
     
     def generate_beep(self, ms, beats):
+        click_duration = 30  # Short, percussive click
         for i in range(beats):
-            if i == 0:
-                vol = 1
-                freq = 880.0
-            else:
-                vol = 0.7
-                freq = 440.0
-            self.append_sinewave(volume=vol, duration_milliseconds=50, freq=freq)
-            self.append_silence(duration_milliseconds=ms - 50)
+            is_accent = (i == 0)  # First beat is accented
+            vol = 1.0 if is_accent else 0.8
+            self.append_click(duration_milliseconds=click_duration, volume=vol, is_accent=is_accent)
+            self.append_silence(duration_milliseconds=ms - click_duration)
         self.save_wav("./tmp/output.wav")
-        
+
         return
 
 

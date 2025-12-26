@@ -2,14 +2,14 @@ import os
 import glob
 
 named_bpm = {
-    'largo': [40, 58],
-    'larghetto': [58, 63],
-    'adagio': [63, 72],
-    'andante': [72, 104],
-    'moderato': [104, 116],
-    'allegro': [116, 160],
-    'presto': [160, 192],
-    'prestissimo': [192, 216]
+    'Largo': [40, 58],
+    'Larghetto': [58, 63],
+    'Adagio': [63, 72],
+    'Andante': [72, 104],
+    'Moderato': [104, 116],
+    'Allegro': [116, 160],
+    'Presto': [160, 192],
+    'Prestissimo': [192, 216]
 }
 
 def get_bpm_name(bpm):

@@ -13,11 +13,36 @@ st.sidebar.title("Settings")
 
 bpm = st.sidebar.slider("BPM", min_value=40, max_value=208, value=120, step=1)
 
-st.metric(f"{lib.get_bpm_name(bpm)}", f"{bpm}")
-
 beats = st.sidebar.slider("Beats", min_value=1, max_value=8, value=4, step=1)
 
-start = st.sidebar.button("Démarrer le métronome")
+head_col1, head_col2, head_col3 = st.columns(3)
+
+head_col1.metric(f"{lib.get_bpm_name(bpm)}", f"{bpm}")
+head_col2.metric(f"Beats", f"{beats}")
+iteration = head_col3.metric(f"Iteration", f"0")
+
+start = st.button(":blue[Démarrer le métronome]")
+
+footer = """
+        <style>
+          # MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #fff;
+            color: grey;
+            text-align: center;
+        }
+        </style>
+        <div class="footer">
+        <p>❤️ Source code available <a href="https://github.com/tintamarre/metronome">here</a></p>
+        </div>
+    """
+st.markdown(footer, unsafe_allow_html=True)
+
 
 count = 0
 
@@ -28,12 +53,12 @@ def display_metronome(audio_path, svg_path):
     with open(audio_path, "rb") as f:
         audio_file = f.read()
 
-    b64_audio = base64.b64encode(audio_file).decode()
+    b64_audio = base64.b64encode(audio_file).decode("utf-8")
     b64_svg = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     
     html = f"""
         <img src="data:image/svg+xml;base64,{b64_svg}"/>
-        <audio autoplay="false" loop>
+        <audio autoplay loop>
         <source src="data:audio/wav;base64,{b64_audio}" type="audio/wav">
         </audio>
     """
@@ -42,6 +67,8 @@ def display_metronome(audio_path, svg_path):
         html,
         unsafe_allow_html=True,
     )
+
+ 
 
 if start:
     ms = lib.get_milliseconds(bpm)
@@ -54,16 +81,14 @@ if start:
 
     display_metronome("./tmp/output.wav", "./output.svg")
     
-    stop = st.sidebar.button("Arrêter")
+    stop = st.button("Arrêter")
     if stop:
         st.experimental_rerun()
-
-    counter = st.empty()
     
     while True: 
         count += 1
         time.sleep(total_duration)
-        counter.markdown(f"# {count}")
+        iteration.metric(f"Iteration", f"{count}")
     
         
 
