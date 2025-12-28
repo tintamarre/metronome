@@ -11,31 +11,61 @@ const props = defineProps<{
 
 // Circle configuration
 const CIRCLE_RADIUS = 24
-const CIRCLE_SPACING = 80
 const PADDING = 40
+
+// Container ref and width
+const containerRef = ref<HTMLElement | null>(null)
+const containerWidth = ref(400)
+
+// Calculate spacing based on container width
+const circleSpacing = computed(() => {
+  if (props.beats <= 1) return 0
+  const availableWidth = containerWidth.value - PADDING * 2
+  return availableWidth / (props.beats - 1)
+})
 
 // Track if we're in dark mode
 const isDark = ref(true)
+
+// Resize observer
+let resizeObserver: ResizeObserver | null = null
 
 onMounted(() => {
   // Check initial state
   isDark.value = document.documentElement.classList.contains('dark')
 
-  // Watch for changes
-  const observer = new MutationObserver(() => {
+  // Watch for dark mode changes
+  const mutationObserver = new MutationObserver(() => {
     isDark.value = document.documentElement.classList.contains('dark')
   })
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+  mutationObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+
+  // Watch for container size changes
+  if (containerRef.value) {
+    containerWidth.value = containerRef.value.clientWidth
+    resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        containerWidth.value = entry.contentRect.width
+      }
+    })
+    resizeObserver.observe(containerRef.value)
+  }
 })
 
-// Computed SVG width
-const svgWidth = computed(() => PADDING * 2 + (props.beats - 1) * CIRCLE_SPACING)
+onUnmounted(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+  }
+})
+
+// Computed SVG width - use full container width
+const svgWidth = computed(() => containerWidth.value)
 
 // Generate beat circles
 const circles = computed(() => {
   return Array.from({ length: props.beats }, (_, i) => ({
     index: i,
-    cx: PADDING + i * CIRCLE_SPACING,
+    cx: PADDING + i * circleSpacing.value,
     cy: 60,
     isAccent: props.accentEnabled && i === 0,
     isActive: props.isPlaying && props.currentBeat === i,
@@ -61,8 +91,9 @@ function animateProgress(timestamp: number) {
   const progress = Math.min(elapsed / props.beatIntervalMs, 1)
 
   // Calculate position: from current beat towards next beat
-  const currentX = props.currentBeat * CIRCLE_SPACING
-  const nextX = Math.min((props.currentBeat + 1) * CIRCLE_SPACING, (props.beats - 1) * CIRCLE_SPACING)
+  const spacing = circleSpacing.value
+  const currentX = props.currentBeat * spacing
+  const nextX = Math.min((props.currentBeat + 1) * spacing, (props.beats - 1) * spacing)
 
   progressPosition.value = currentX + (nextX - currentX) * progress
 
@@ -144,18 +175,18 @@ function getCircleTransform(circle: { isActive: boolean }, cx: number, cy: numbe
 </script>
 
 <template>
-  <div class="w-full overflow-x-auto py-2">
+  <div ref="containerRef" class="w-full py-2">
     <svg
       :width="svgWidth"
       height="100"
-      class="mx-auto block"
+      class="block"
       :viewBox="`0 0 ${svgWidth} 100`"
     >
       <!-- Background line -->
       <line
         :x1="PADDING"
         y1="60"
-        :x2="PADDING + (beats - 1) * CIRCLE_SPACING"
+        :x2="PADDING + (beats - 1) * circleSpacing"
         y2="60"
         :stroke="lineColor"
         stroke-width="3"

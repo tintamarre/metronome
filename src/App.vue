@@ -54,7 +54,7 @@ const { theme, toggleTheme } = useTheme()
       />
 
       <!-- Visualization -->
-      <div class="w-full max-w-2xl my-4">
+      <div class="w-full max-w-md mx-auto my-4 px-3">
         <BeatVisualization
           :beats="beats"
           :current-beat="currentBeat"
