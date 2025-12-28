@@ -8,6 +8,7 @@ const props = defineProps<{
   accentEnabled: boolean
   soundPreset: string
   soundPresets: SoundPreset[]
+  isOfficialTempo: boolean
 }>()
 
 const emit = defineEmits<{
@@ -25,7 +26,11 @@ const emit = defineEmits<{
     <div class="flex flex-col gap-2">
       <div class="flex justify-between items-center">
         <label class="text-sm font-medium text-gray-600 dark:text-gray-300">BPM</label>
-        <span class="text-2xl font-bold text-beat tabular-nums">{{ bpm }}</span>
+        <span
+          class="text-2xl font-bold tabular-nums transition-colors duration-200"
+          :style="isOfficialTempo ? { color: '#e76f51' } : {}"
+          :class="{ 'text-beat': !isOfficialTempo }"
+        >{{ bpm }}</span>
       </div>
       <input
         type="range"

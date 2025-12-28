@@ -15,6 +15,7 @@ const {
   accentEnabled,
   soundPreset,
   soundPresets,
+  isOfficialTempo,
   toggle,
 } = useMetronome()
 
@@ -69,6 +70,7 @@ const { theme, toggleTheme } = useTheme()
         :accent-enabled="accentEnabled"
         :sound-preset="soundPreset"
         :sound-presets="soundPresets"
+        :is-official-tempo="isOfficialTempo"
         @update:bpm="bpm = $event"
         @update:beats="beats = $event"
         @update:accent-enabled="accentEnabled = $event"

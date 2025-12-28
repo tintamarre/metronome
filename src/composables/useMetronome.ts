@@ -1,7 +1,7 @@
 import { ref, computed, watch } from 'vue'
 import { useAudioEngine } from './useAudioEngine'
 import { useTempoNames } from './useTempoNames'
-import { BPM_DEFAULT, BEATS_DEFAULT, DEFAULT_SOUND_PRESET, SOUND_PRESETS } from '../types/metronome'
+import { BPM_DEFAULT, BEATS_DEFAULT, DEFAULT_SOUND_PRESET, SOUND_PRESETS, OFFICIAL_TEMPOS } from '../types/metronome'
 
 export function useMetronome() {
   // State
@@ -24,6 +24,9 @@ export function useMetronome() {
 
   // Computed: beat interval in milliseconds
   const beatIntervalMs = computed(() => beatInterval.value * 1000)
+
+  // Computed: is current BPM an official tempo marking
+  const isOfficialTempo = computed(() => OFFICIAL_TEMPOS.includes(bpm.value as typeof OFFICIAL_TEMPOS[number]))
 
   // Scheduler reference
   let scheduler: ReturnType<typeof audioEngine.createScheduler> | null = null
@@ -115,6 +118,7 @@ export function useMetronome() {
     // Computed
     tempoName,
     beatIntervalMs,
+    isOfficialTempo,
 
     // Methods
     start,
