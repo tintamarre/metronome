@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { BPM_MIN, BPM_MAX, BEATS_MIN, BEATS_MAX } from '../types/metronome'
+import { BPM_MIN, BPM_MAX, BEATS_MIN, BEATS_MAX, type SoundPreset } from '../types/metronome'
 
 const props = defineProps<{
   bpm: number
   beats: number
   isPlaying: boolean
   accentEnabled: boolean
+  soundPreset: string
+  soundPresets: SoundPreset[]
 }>()
 
 const emit = defineEmits<{
   'update:bpm': [value: number]
   'update:beats': [value: number]
   'update:accentEnabled': [value: boolean]
+  'update:soundPreset': [value: string]
   'toggle': []
 }>()
 </script>
@@ -55,6 +58,24 @@ const emit = defineEmits<{
       <div class="flex justify-between text-xs text-gray-400 dark:text-gray-500">
         <span>{{ BEATS_MIN }}</span>
         <span>{{ BEATS_MAX }}</span>
+      </div>
+    </div>
+
+    <!-- Sound Preset -->
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Sound</label>
+      <div class="flex flex-wrap gap-2">
+        <button
+          v-for="preset in soundPresets"
+          :key="preset.id"
+          @click="emit('update:soundPreset', preset.id)"
+          class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-200"
+          :class="soundPreset === preset.id
+            ? 'bg-beat text-white'
+            : 'bg-gray-200 dark:bg-dark-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-dark-600'"
+        >
+          {{ preset.name }}
+        </button>
       </div>
     </div>
 

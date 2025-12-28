@@ -13,6 +13,8 @@ const {
   iteration,
   tempoName,
   accentEnabled,
+  soundPreset,
+  soundPresets,
   toggle,
 } = useMetronome()
 
@@ -65,9 +67,12 @@ const { theme, toggleTheme } = useTheme()
         :beats="beats"
         :is-playing="isPlaying"
         :accent-enabled="accentEnabled"
+        :sound-preset="soundPreset"
+        :sound-presets="soundPresets"
         @update:bpm="bpm = $event"
         @update:beats="beats = $event"
         @update:accent-enabled="accentEnabled = $event"
+        @update:sound-preset="soundPreset = $event"
         @toggle="toggle"
       />
     </main>

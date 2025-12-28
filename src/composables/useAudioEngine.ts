@@ -1,5 +1,5 @@
 import { ref, shallowRef } from 'vue'
-import { ACCENT_CLICK, REGULAR_CLICK, type ClickConfig } from '../types/metronome'
+import { SOUND_PRESETS, DEFAULT_SOUND_PRESET, type ClickConfig } from '../types/metronome'
 
 const SAMPLE_RATE = 44100
 const SCHEDULE_AHEAD_TIME = 0.1 // 100ms look-ahead
@@ -10,6 +10,7 @@ export function useAudioEngine() {
   const accentBuffer = shallowRef<AudioBuffer | null>(null)
   const regularBuffer = shallowRef<AudioBuffer | null>(null)
   const isInitialized = ref(false)
+  const currentPresetId = ref(DEFAULT_SOUND_PRESET)
 
   /**
    * Generate a click sound buffer using the same synthesis as the Python version
@@ -60,9 +61,26 @@ export function useAudioEngine() {
   }
 
   /**
+   * Get preset by ID
+   */
+  function getPreset(presetId: string) {
+    return SOUND_PRESETS.find(p => p.id === presetId) || SOUND_PRESETS[0]!
+  }
+
+  /**
+   * Generate buffers for a preset
+   */
+  async function generateBuffersForPreset(presetId: string): Promise<void> {
+    const preset = getPreset(presetId)
+    accentBuffer.value = await createClickBuffer(preset.accent)
+    regularBuffer.value = await createClickBuffer(preset.regular)
+    currentPresetId.value = presetId
+  }
+
+  /**
    * Initialize audio context - MUST be called from a user gesture (click/tap)
    */
-  async function initialize(): Promise<void> {
+  async function initialize(presetId?: string): Promise<void> {
     if (isInitialized.value) return
 
     // Create audio context
@@ -74,10 +92,20 @@ export function useAudioEngine() {
     }
 
     // Pre-generate click buffers
-    accentBuffer.value = await createClickBuffer(ACCENT_CLICK)
-    regularBuffer.value = await createClickBuffer(REGULAR_CLICK)
+    await generateBuffersForPreset(presetId || DEFAULT_SOUND_PRESET)
 
     isInitialized.value = true
+  }
+
+  /**
+   * Change sound preset
+   */
+  async function setSoundPreset(presetId: string): Promise<void> {
+    if (!isInitialized.value) {
+      currentPresetId.value = presetId
+      return
+    }
+    await generateBuffersForPreset(presetId)
   }
 
   /**
@@ -181,8 +209,10 @@ export function useAudioEngine() {
 
   return {
     isInitialized,
+    currentPresetId,
     initialize,
     resume,
+    setSoundPreset,
     scheduleClick,
     getCurrentTime,
     createScheduler,

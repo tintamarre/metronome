@@ -1,7 +1,7 @@
 import { ref, computed, watch } from 'vue'
 import { useAudioEngine } from './useAudioEngine'
 import { useTempoNames } from './useTempoNames'
-import { BPM_DEFAULT, BEATS_DEFAULT } from '../types/metronome'
+import { BPM_DEFAULT, BEATS_DEFAULT, DEFAULT_SOUND_PRESET, SOUND_PRESETS } from '../types/metronome'
 
 export function useMetronome() {
   // State
@@ -11,6 +11,7 @@ export function useMetronome() {
   const currentBeat = ref(0)
   const iteration = ref(0)
   const accentEnabled = ref(true)
+  const soundPreset = ref(DEFAULT_SOUND_PRESET)
 
   // Audio engine
   const audioEngine = useAudioEngine()
@@ -49,11 +50,16 @@ export function useMetronome() {
     }
   })
 
+  // Watch for sound preset changes
+  watch(soundPreset, async (newPreset) => {
+    await audioEngine.setSoundPreset(newPreset)
+  })
+
   // Start metronome
   async function start() {
     // Initialize audio on first start (user gesture)
     if (!audioEngine.isInitialized.value) {
-      await audioEngine.initialize()
+      await audioEngine.initialize(soundPreset.value)
     } else {
       // Resume if needed (iOS)
       await audioEngine.resume()
@@ -101,6 +107,10 @@ export function useMetronome() {
     currentBeat,
     iteration,
     accentEnabled,
+    soundPreset,
+
+    // Constants
+    soundPresets: SOUND_PRESETS,
 
     // Computed
     tempoName,
