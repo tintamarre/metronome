@@ -43,7 +43,7 @@ const { theme, toggleTheme } = useTheme()
     </div>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col items-center justify-center px-4 py-8">
+    <main class="flex-1 flex flex-col items-center justify-center px-4 py-4">
       <!-- Display -->
       <MetronomeDisplay
         :tempo-name="tempoName"
@@ -53,7 +53,7 @@ const { theme, toggleTheme } = useTheme()
       />
 
       <!-- Visualization -->
-      <div class="w-full max-w-2xl my-8">
+      <div class="w-full max-w-2xl my-4">
         <BeatVisualization
           :beats="beats"
           :current-beat="currentBeat"
@@ -80,14 +80,14 @@ const { theme, toggleTheme } = useTheme()
     </main>
 
     <!-- Footer -->
-    <footer class="py-4 text-center text-gray-500 dark:text-gray-600 text-sm">
-      <a
+    <footer class="py-2 text-center text-gray-500 dark:text-gray-600 text-sm">
+      
+        Built with ❤️ by Martin – <a
         href="https://github.com/tintamarre/metronome"
         target="_blank"
         rel="noopener noreferrer"
         class="hover:text-gray-700 dark:hover:text-gray-400 transition-colors"
-      >
-        Source on GitHub
+      >Source code
       </a>
     </footer>
   </div>
