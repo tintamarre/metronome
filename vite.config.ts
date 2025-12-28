@@ -8,7 +8,4 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
-  server: {
-    allowedHosts: ['metronome.tintamarre.be'],
-  },
 })
