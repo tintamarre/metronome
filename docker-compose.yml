@@ -1,0 +1,9 @@
+services:
+  metronome:
+    build: .
+    ports:
+      - "8501:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev -- --host

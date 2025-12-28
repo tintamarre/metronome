@@ -1,0 +1,89 @@
+<script setup lang="ts">
+import { BPM_MIN, BPM_MAX, BEATS_MIN, BEATS_MAX } from '../types/metronome'
+
+const props = defineProps<{
+  bpm: number
+  beats: number
+  isPlaying: boolean
+  accentEnabled: boolean
+}>()
+
+const emit = defineEmits<{
+  'update:bpm': [value: number]
+  'update:beats': [value: number]
+  'update:accentEnabled': [value: boolean]
+  'toggle': []
+}>()
+</script>
+
+<template>
+  <div class="flex flex-col gap-6 w-full max-w-md mx-auto p-4">
+    <!-- BPM Control -->
+    <div class="flex flex-col gap-2">
+      <div class="flex justify-between items-center">
+        <label class="text-sm font-medium text-gray-600 dark:text-gray-300">BPM</label>
+        <span class="text-2xl font-bold text-beat tabular-nums">{{ bpm }}</span>
+      </div>
+      <input
+        type="range"
+        :min="BPM_MIN"
+        :max="BPM_MAX"
+        :value="bpm"
+        @input="emit('update:bpm', parseInt(($event.target as HTMLInputElement).value))"
+        class="w-full h-2 rounded-lg cursor-pointer"
+      />
+      <div class="flex justify-between text-xs text-gray-400 dark:text-gray-500">
+        <span>{{ BPM_MIN }}</span>
+        <span>{{ BPM_MAX }}</span>
+      </div>
+    </div>
+
+    <!-- Beats Control -->
+    <div class="flex flex-col gap-2">
+      <div class="flex justify-between items-center">
+        <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Beats</label>
+        <span class="text-2xl font-bold text-beat tabular-nums">{{ beats }}</span>
+      </div>
+      <input
+        type="range"
+        :min="BEATS_MIN"
+        :max="BEATS_MAX"
+        :value="beats"
+        @input="emit('update:beats', parseInt(($event.target as HTMLInputElement).value))"
+        class="w-full h-2 rounded-lg cursor-pointer"
+      />
+      <div class="flex justify-between text-xs text-gray-400 dark:text-gray-500">
+        <span>{{ BEATS_MIN }}</span>
+        <span>{{ BEATS_MAX }}</span>
+      </div>
+    </div>
+
+    <!-- Accent Toggle -->
+    <div class="flex items-center justify-between">
+      <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Accent first beat</label>
+      <button
+        @click="emit('update:accentEnabled', !accentEnabled)"
+        class="relative w-12 h-7 rounded-full transition-colors duration-200"
+        :class="accentEnabled ? 'bg-beat' : 'bg-gray-300 dark:bg-dark-700'"
+      >
+        <span
+          class="absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
+          :class="accentEnabled ? 'translate-x-5' : 'translate-x-0'"
+        />
+      </button>
+    </div>
+
+    <!-- Start/Stop Button -->
+    <button
+      @click="emit('toggle')"
+      class="w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 touch-manipulation shadow-lg"
+      :class="[
+        isPlaying
+          ? 'bg-red-600 hover:bg-red-700 active:bg-red-800 text-white'
+          : 'bg-beat hover:bg-teal-600 active:bg-teal-700 text-white'
+      ]"
+    >
+      {{ isPlaying ? 'Stop' : 'Start' }}
+    </button>
+  </div>
+</template>
