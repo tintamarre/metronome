@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 
 const props = defineProps<{
   beats: number
   currentBeat: number
   isPlaying: boolean
   accentEnabled: boolean
+  beatIntervalMs: number
 }>()
 
 // Circle configuration
@@ -43,6 +44,68 @@ const circles = computed(() => {
 
 // Line color based on theme
 const lineColor = computed(() => isDark.value ? '#2a2a2a' : '#d1d5db')
+
+// Animation state
+const progressPosition = ref(0)
+let animationFrameId: number | null = null
+let beatStartTime = 0
+
+// Animate the progress line
+function animateProgress(timestamp: number) {
+  if (!props.isPlaying) {
+    progressPosition.value = 0
+    return
+  }
+
+  const elapsed = timestamp - beatStartTime
+  const progress = Math.min(elapsed / props.beatIntervalMs, 1)
+
+  // Calculate position: from current beat towards next beat
+  const currentX = props.currentBeat * CIRCLE_SPACING
+  const nextX = Math.min((props.currentBeat + 1) * CIRCLE_SPACING, (props.beats - 1) * CIRCLE_SPACING)
+
+  progressPosition.value = currentX + (nextX - currentX) * progress
+
+  animationFrameId = requestAnimationFrame(animateProgress)
+}
+
+// Watch for beat changes to reset animation timing
+watch(() => props.currentBeat, () => {
+  beatStartTime = performance.now()
+})
+
+// Watch for play state changes
+watch(() => props.isPlaying, (playing) => {
+  if (playing) {
+    beatStartTime = performance.now()
+    animationFrameId = requestAnimationFrame(animateProgress)
+  } else {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId)
+      animationFrameId = null
+    }
+    progressPosition.value = 0
+  }
+})
+
+onUnmounted(() => {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId)
+  }
+})
+
+// Progress line end position
+const progressLineX2 = computed(() => {
+  return PADDING + progressPosition.value
+})
+
+// Progress line color (matches the beat color)
+const progressLineColor = computed(() => {
+  if (props.accentEnabled && props.currentBeat === 0) {
+    return '#e76f51'
+  }
+  return '#2a9d8f'
+})
 
 // Get circle fill color
 function getCircleFill(circle: { isAccent: boolean; isActive: boolean }): string {
@@ -88,13 +151,25 @@ function getCircleTransform(circle: { isActive: boolean }, cx: number, cy: numbe
       class="mx-auto block"
       :viewBox="`0 0 ${svgWidth} 100`"
     >
-      <!-- Connecting line -->
+      <!-- Background line -->
       <line
         :x1="PADDING"
         y1="60"
         :x2="PADDING + (beats - 1) * CIRCLE_SPACING"
         y2="60"
         :stroke="lineColor"
+        stroke-width="3"
+        stroke-linecap="round"
+      />
+
+      <!-- Progress line -->
+      <line
+        v-if="isPlaying && beats > 1"
+        :x1="PADDING"
+        y1="60"
+        :x2="progressLineX2"
+        y2="60"
+        :stroke="progressLineColor"
         stroke-width="3"
         stroke-linecap="round"
       />

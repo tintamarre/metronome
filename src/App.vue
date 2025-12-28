@@ -16,6 +16,7 @@ const {
   soundPreset,
   soundPresets,
   isOfficialTempo,
+  beatIntervalMs,
   toggle,
 } = useMetronome()
 
@@ -59,6 +60,7 @@ const { theme, toggleTheme } = useTheme()
           :current-beat="currentBeat"
           :is-playing="isPlaying"
           :accent-enabled="accentEnabled"
+          :beat-interval-ms="beatIntervalMs"
         />
       </div>
 
