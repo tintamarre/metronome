@@ -29,6 +29,24 @@ export interface SoundPreset {
 
 export const SOUND_PRESETS: SoundPreset[] = [
   {
+    id: 'pendulum',
+    name: 'Pendulum',
+    accent: {
+      frequencies: [500, 1000, 1500, 2500],
+      weights: [1.0, 0.8, 0.4, 0.6],
+      decayRate: 350,
+      volume: 1.0,
+      duration: 0.012,
+    },
+    regular: {
+      frequencies: [450, 900, 1350, 2200],
+      weights: [1.0, 0.7, 0.35, 0.5],
+      decayRate: 400,
+      volume: 0.9,
+      duration: 0.012,
+    },
+  },
+  {
     id: 'mechanical',
     name: 'Mechanical',
     accent: {
@@ -156,7 +174,7 @@ export const SOUND_PRESETS: SoundPreset[] = [
   },
 ]
 
-export const DEFAULT_SOUND_PRESET = 'mechanical'
+export const DEFAULT_SOUND_PRESET = 'pendulum'
 
 // Legacy exports for compatibility
 export const ACCENT_CLICK: ClickConfig = SOUND_PRESETS[0]!.accent
