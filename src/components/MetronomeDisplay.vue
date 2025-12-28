@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-4 py-6">
+  <div class="flex flex-col items-center gap-4 py-2">
     <!-- Tempo Name -->
     <div class="text-center">
       <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tight">

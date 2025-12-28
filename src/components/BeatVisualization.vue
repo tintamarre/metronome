@@ -81,12 +81,12 @@ function getCircleTransform(circle: { isActive: boolean }, cx: number, cy: numbe
 </script>
 
 <template>
-  <div class="w-full overflow-x-auto py-4">
+  <div class="w-full overflow-x-auto py-2">
     <svg
       :width="svgWidth"
-      height="120"
+      height="100"
       class="mx-auto block"
-      :viewBox="`0 0 ${svgWidth} 120`"
+      :viewBox="`0 0 ${svgWidth} 100`"
     >
       <!-- Connecting line -->
       <line
