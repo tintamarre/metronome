@@ -75,7 +75,7 @@ const { theme, toggleTheme } = useTheme()
     <!-- Footer -->
     <footer class="py-4 text-center text-gray-500 dark:text-gray-600 text-sm">
       <a
-        href="https://github.com/martin/metronome"
+        href="https://github.com/tintamarre/metronome"
         target="_blank"
         rel="noopener noreferrer"
         class="hover:text-gray-700 dark:hover:text-gray-400 transition-colors"
