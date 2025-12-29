@@ -1,5 +1,23 @@
 <script setup lang="ts">
-import { BPM_MIN, BPM_MAX, BEATS_MIN, BEATS_MAX, type SoundPreset } from '../types/metronome'
+import { BPM_MIN, BPM_MAX, BEATS_MIN, BEATS_MAX, OFFICIAL_TEMPOS, type SoundPreset } from '../types/metronome'
+
+const getPreviousOfficialTempo = (currentBpm: number): number => {
+  for (let i = OFFICIAL_TEMPOS.length - 1; i >= 0; i--) {
+    if (OFFICIAL_TEMPOS[i]! < currentBpm) {
+      return OFFICIAL_TEMPOS[i]!
+    }
+  }
+  return OFFICIAL_TEMPOS[0]!
+}
+
+const getNextOfficialTempo = (currentBpm: number): number => {
+  for (const tempo of OFFICIAL_TEMPOS) {
+    if (tempo > currentBpm) {
+      return tempo
+    }
+  }
+  return OFFICIAL_TEMPOS[OFFICIAL_TEMPOS.length - 1]!
+}
 
 const props = defineProps<{
   bpm: number
@@ -32,14 +50,36 @@ const emit = defineEmits<{
           :class="{ 'text-beat': !isOfficialTempo }"
         >{{ bpm }}</span>
       </div>
-      <input
-        type="range"
-        :min="BPM_MIN"
-        :max="BPM_MAX"
-        :value="bpm"
-        @input="emit('update:bpm', parseInt(($event.target as HTMLInputElement).value))"
-        class="w-full h-2 rounded-lg cursor-pointer"
-      />
+      <div class="flex items-center gap-2">
+        <button
+          @click="emit('update:bpm', getPreviousOfficialTempo(props.bpm))"
+          :disabled="props.bpm <= OFFICIAL_TEMPOS[0]!"
+          class="w-10 h-10 rounded-lg font-bold text-lg transition-colors duration-200 flex items-center justify-center shrink-0"
+          :class="props.bpm <= OFFICIAL_TEMPOS[0]!
+            ? 'bg-gray-200 dark:bg-dark-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+            : 'bg-gray-200 dark:bg-dark-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-dark-600'"
+        >
+          &minus;
+        </button>
+        <input
+          type="range"
+          :min="BPM_MIN"
+          :max="BPM_MAX"
+          :value="bpm"
+          @input="emit('update:bpm', parseInt(($event.target as HTMLInputElement).value))"
+          class="w-full h-2 rounded-lg cursor-pointer"
+        />
+        <button
+          @click="emit('update:bpm', getNextOfficialTempo(props.bpm))"
+          :disabled="props.bpm >= OFFICIAL_TEMPOS[OFFICIAL_TEMPOS.length - 1]!"
+          class="w-10 h-10 rounded-lg font-bold text-lg transition-colors duration-200 flex items-center justify-center shrink-0"
+          :class="props.bpm >= OFFICIAL_TEMPOS[OFFICIAL_TEMPOS.length - 1]!
+            ? 'bg-gray-200 dark:bg-dark-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+            : 'bg-gray-200 dark:bg-dark-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-dark-600'"
+        >
+          +
+        </button>
+      </div>
       <div class="flex justify-between text-xs text-gray-400 dark:text-gray-500">
         <span>{{ BPM_MIN }}</span>
         <span>{{ BPM_MAX }}</span>
