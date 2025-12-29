@@ -13,7 +13,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="flex justify-center gap-2 py-3">
+  <div class="flex justify-center gap-2 py-1">
     <button
       v-for="(string, index) in strings"
       :key="index"

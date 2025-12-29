@@ -39,9 +39,9 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex flex-col gap-3 w-full max-w-md mx-auto p-3">
+  <div class="flex flex-col gap-2 w-full max-w-md mx-auto p-3">
     <!-- BPM Control -->
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-1">
       <div class="flex justify-between items-center">
         <label class="text-sm font-medium text-gray-600 dark:text-gray-300">BPM</label>
         <span
@@ -87,7 +87,7 @@ const emit = defineEmits<{
     </div>
 
     <!-- Beats Control -->
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-1">
       <div class="flex justify-between items-center">
         <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Beats</label>
         <span class="text-2xl font-bold text-beat tabular-nums">{{ beats }}</span>
@@ -107,9 +107,9 @@ const emit = defineEmits<{
     </div>
 
     <!-- Sound Preset -->
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-1">
       <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Sound</label>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-1.5">
         <button
           v-for="preset in soundPresets"
           :key="preset.id"
@@ -142,7 +142,7 @@ const emit = defineEmits<{
     <!-- Start/Stop Button -->
     <button
       @click="emit('toggle')"
-      class="w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 touch-manipulation shadow-lg"
+      class="w-full py-3 px-6 rounded-xl font-bold text-lg transition-all duration-200 touch-manipulation shadow-lg"
       :class="[
         isPlaying
           ? 'bg-red-600 hover:bg-red-700 active:bg-red-800 text-white'

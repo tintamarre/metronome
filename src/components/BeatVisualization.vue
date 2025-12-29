@@ -10,8 +10,8 @@ const props = defineProps<{
 }>()
 
 // Circle configuration
-const CIRCLE_RADIUS = 24
-const PADDING = 40
+const CIRCLE_RADIUS = 20
+const PADDING = 30
 
 // Container ref and width
 const containerRef = ref<HTMLElement | null>(null)
@@ -66,7 +66,7 @@ const circles = computed(() => {
   return Array.from({ length: props.beats }, (_, i) => ({
     index: i,
     cx: PADDING + i * circleSpacing.value,
-    cy: 60,
+    cy: 40,
     isAccent: props.accentEnabled && i === 0,
     isActive: props.isPlaying && props.currentBeat === i,
   }))
@@ -175,19 +175,19 @@ function getCircleTransform(circle: { isActive: boolean }, cx: number, cy: numbe
 </script>
 
 <template>
-  <div ref="containerRef" class="w-full py-2">
+  <div ref="containerRef" class="w-full">
     <svg
       :width="svgWidth"
-      height="100"
+      height="70"
       class="block"
-      :viewBox="`0 0 ${svgWidth} 100`"
+      :viewBox="`0 0 ${svgWidth} 70`"
     >
       <!-- Background line -->
       <line
         :x1="PADDING"
-        y1="60"
+        y1="40"
         :x2="PADDING + (beats - 1) * circleSpacing"
-        y2="60"
+        y2="40"
         :stroke="lineColor"
         stroke-width="3"
         stroke-linecap="round"
@@ -197,9 +197,9 @@ function getCircleTransform(circle: { isActive: boolean }, cx: number, cy: numbe
       <line
         v-if="isPlaying && beats > 1"
         :x1="PADDING"
-        y1="60"
+        y1="40"
         :x2="progressLineX2"
-        y2="60"
+        y2="40"
         :stroke="progressLineColor"
         stroke-width="3"
         stroke-linecap="round"

@@ -8,7 +8,6 @@ defineProps<{
   selectedStringIndex: number | null
   detectedStringIndex: number | null
   currentTuning: GuitarTuning
-  referenceToneEnabled: boolean
   isListening: boolean
 }>()
 
@@ -16,15 +15,14 @@ defineEmits<{
   'update:mode': [value: TunerMode]
   'update:selectedTuningId': [value: string]
   'update:selectedStringIndex': [value: number | null]
-  'update:referenceToneEnabled': [value: boolean]
   toggle: []
 }>()
 </script>
 
 <template>
-  <div class="flex flex-col gap-3 w-full max-w-md mx-auto p-3">
+  <div class="flex flex-col gap-2 w-full max-w-md mx-auto p-3">
     <!-- Mode Selector -->
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-1">
       <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Mode</label>
       <div class="flex gap-2">
         <button
@@ -54,12 +52,12 @@ defineEmits<{
 
     <!-- Guitar Tuning Selector (only in guitar mode) -->
     <template v-if="mode === 'guitar'">
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-1">
         <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Tuning</label>
         <select
           :value="selectedTuningId"
           @change="$emit('update:selectedTuningId', ($event.target as HTMLSelectElement).value)"
-          class="w-full p-3 rounded-lg bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white border-0 focus:ring-2 focus:ring-beat"
+          class="w-full p-2 rounded-lg bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white border-0 focus:ring-2 focus:ring-beat"
         >
           <option v-for="tuning in GUITAR_TUNINGS" :key="tuning.id" :value="tuning.id">
             {{ tuning.name }}
@@ -68,7 +66,7 @@ defineEmits<{
       </div>
 
       <!-- String Selector -->
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-1">
         <label class="text-sm font-medium text-gray-600 dark:text-gray-300">String</label>
         <GuitarStringSelector
           :strings="currentTuning.strings"
@@ -79,25 +77,10 @@ defineEmits<{
       </div>
     </template>
 
-    <!-- Reference Tone Toggle -->
-    <div class="flex items-center justify-between">
-      <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Reference tone</label>
-      <button
-        @click="$emit('update:referenceToneEnabled', !referenceToneEnabled)"
-        class="relative w-12 h-7 rounded-full transition-colors duration-200"
-        :class="referenceToneEnabled ? 'bg-beat' : 'bg-gray-300 dark:bg-dark-700'"
-      >
-        <span
-          class="absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
-          :class="referenceToneEnabled ? 'translate-x-5' : 'translate-x-0'"
-        />
-      </button>
-    </div>
-
     <!-- Start/Stop Button -->
     <button
       @click="$emit('toggle')"
-      class="w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 touch-manipulation shadow-lg"
+      class="w-full py-3 px-6 rounded-xl font-bold text-lg transition-all duration-200 touch-manipulation shadow-lg"
       :class="[
         isListening
           ? 'bg-red-600 hover:bg-red-700 active:bg-red-800 text-white'

@@ -34,7 +34,6 @@ const {
   mode: tunerMode,
   selectedTuningId,
   selectedStringIndex,
-  referenceToneEnabled,
   isListening,
   detectedFrequency,
   detectedNote,
@@ -89,7 +88,7 @@ const { theme, toggleTheme } = useTheme()
         />
 
         <!-- Visualization -->
-        <div class="w-full max-w-md mx-auto my-4 px-3">
+        <div class="w-full max-w-md mx-auto my-2 px-3">
           <BeatVisualization
             :beats="beats"
             :current-beat="currentBeat"
@@ -133,12 +132,10 @@ const { theme, toggleTheme } = useTheme()
           :selected-string-index="selectedStringIndex"
           :detected-string-index="detectedStringIndex"
           :current-tuning="currentTuning"
-          :reference-tone-enabled="referenceToneEnabled"
           :is-listening="isListening"
           @update:mode="setMode($event)"
           @update:selected-tuning-id="setTuning($event)"
           @update:selected-string-index="selectString($event)"
-          @update:reference-tone-enabled="referenceToneEnabled = $event"
           @toggle="toggleTuning()"
         />
       </template>

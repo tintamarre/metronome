@@ -35,25 +35,25 @@ const centsColorClass = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-2 w-full max-w-md mx-auto">
+  <div class="flex flex-col items-center gap-1 w-full max-w-md mx-auto">
     <!-- Note Name -->
     <div class="flex flex-col items-center">
       <div class="flex items-baseline gap-1">
         <h2
-          class="text-7xl font-bold transition-colors duration-200"
+          class="text-6xl font-bold transition-colors duration-200"
           :class="isInTune ? 'text-green-500' : 'text-gray-900 dark:text-white'"
         >
           {{ noteName ?? '--' }}
         </h2>
         <span
           v-if="octave !== null"
-          class="text-3xl font-medium text-gray-400 dark:text-gray-500"
+          class="text-2xl font-medium text-gray-400 dark:text-gray-500"
         >
           {{ octave }}
         </span>
       </div>
       <div
-        class="text-2xl font-medium transition-colors duration-200"
+        class="text-xl font-medium transition-colors duration-200"
         :class="isInTune ? 'text-green-500/70' : 'text-gray-500 dark:text-gray-400'"
       >
         {{ solfegeName ?? '--' }}
@@ -63,23 +63,19 @@ const centsColorClass = computed(() => {
     <!-- Needle Gauge -->
     <TunerNeedleGauge :cents="cents" :is-active="isListening && noteName !== null" />
 
-    <!-- Cents Display -->
-    <div class="text-2xl font-semibold tabular-nums transition-colors duration-200" :class="centsColorClass">
-      {{ centsDisplay }} <span class="text-base font-normal">cents</span>
-    </div>
-
-    <!-- Frequency -->
-    <div class="text-sm text-gray-400 dark:text-gray-500 tabular-nums">
-      {{ frequency !== null ? frequency.toFixed(1) : '---' }} Hz
-    </div>
-
-    <!-- Signal Strength -->
-    <div class="w-40 mt-2">
-      <div class="flex justify-between text-xs text-gray-400 dark:text-gray-500 mb-1">
-        <span>Signal</span>
-        <span>{{ Math.round(signalStrength * 100) }}%</span>
+    <!-- Cents and Frequency -->
+    <div class="flex items-baseline gap-3">
+      <div class="text-xl font-semibold tabular-nums transition-colors duration-200" :class="centsColorClass">
+        {{ centsDisplay }} <span class="text-sm font-normal">cents</span>
       </div>
-      <div class="w-full h-2 bg-gray-200 dark:bg-dark-700 rounded-full overflow-hidden">
+      <div class="text-sm text-gray-400 dark:text-gray-500 tabular-nums">
+        {{ frequency !== null ? frequency.toFixed(1) : '---' }} Hz
+      </div>
+    </div>
+
+    <!-- Signal Strength (compact) -->
+    <div class="w-32">
+      <div class="w-full h-1.5 bg-gray-200 dark:bg-dark-700 rounded-full overflow-hidden">
         <div
           class="h-full rounded-full transition-all duration-100"
           :class="signalStrength > 0.3 ? 'bg-beat' : 'bg-gray-400 dark:bg-gray-600'"

@@ -5,7 +5,7 @@ import { GUITAR_TUNINGS, CENTS_TOLERANCE, type TunerMode, type NoteInfo } from '
 
 export function useTuner() {
   // Mode and tuning selection
-  const mode = ref<TunerMode>('guitar')
+  const mode = ref<TunerMode>('chromatic')
   const selectedTuningId = ref('standard')
   const selectedStringIndex = ref<number | null>(null)
   const referenceToneEnabled = ref(false)
