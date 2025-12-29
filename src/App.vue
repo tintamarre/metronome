@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useMetronome } from './composables/useMetronome'
+import { useTuner } from './composables/useTuner'
 import { useTheme } from './composables/useTheme'
 import MetronomeControls from './components/MetronomeControls.vue'
 import MetronomeDisplay from './components/MetronomeDisplay.vue'
 import BeatVisualization from './components/BeatVisualization.vue'
+import TabNavigation from './components/tabs/TabNavigation.vue'
+import TunerDisplay from './components/tuner/TunerDisplay.vue'
+import TunerControls from './components/tuner/TunerControls.vue'
 
+// Tab state
+const activeTab = ref<'metronome' | 'tuner'>('metronome')
+
+// Metronome
 const {
   bpm,
   beats,
@@ -19,6 +28,25 @@ const {
   beatIntervalMs,
   toggle,
 } = useMetronome()
+
+// Tuner
+const {
+  mode: tunerMode,
+  selectedTuningId,
+  selectedStringIndex,
+  referenceToneEnabled,
+  isListening,
+  detectedFrequency,
+  detectedNote,
+  centsDeviation,
+  signalStrength,
+  currentTuning,
+  detectedStringIndex,
+  setMode,
+  setTuning,
+  selectString,
+  toggleTuning,
+} = useTuner()
 
 const { theme, toggleTheme } = useTheme()
 </script>
@@ -43,42 +71,77 @@ const { theme, toggleTheme } = useTheme()
       </button>
     </div>
 
+    <!-- Tab Navigation -->
+    <div class="w-full max-w-md mx-auto pt-4 px-4">
+      <TabNavigation v-model:active-tab="activeTab" />
+    </div>
+
     <!-- Main Content -->
     <main class="flex-1 flex flex-col items-center justify-center px-4 py-4">
-      <!-- Display -->
-      <MetronomeDisplay
-        :tempo-name="tempoName"
-        :bpm="bpm"
-        :iteration="iteration"
-        :beats="beats"
-      />
-
-      <!-- Visualization -->
-      <div class="w-full max-w-md mx-auto my-4 px-3">
-        <BeatVisualization
+      <!-- Metronome Tab -->
+      <template v-if="activeTab === 'metronome'">
+        <!-- Display -->
+        <MetronomeDisplay
+          :tempo-name="tempoName"
+          :bpm="bpm"
+          :iteration="iteration"
           :beats="beats"
-          :current-beat="currentBeat"
+        />
+
+        <!-- Visualization -->
+        <div class="w-full max-w-md mx-auto my-4 px-3">
+          <BeatVisualization
+            :beats="beats"
+            :current-beat="currentBeat"
+            :is-playing="isPlaying"
+            :accent-enabled="accentEnabled"
+            :beat-interval-ms="beatIntervalMs"
+          />
+        </div>
+
+        <!-- Controls -->
+        <MetronomeControls
+          :bpm="bpm"
+          :beats="beats"
           :is-playing="isPlaying"
           :accent-enabled="accentEnabled"
-          :beat-interval-ms="beatIntervalMs"
+          :sound-preset="soundPreset"
+          :sound-presets="soundPresets"
+          :is-official-tempo="isOfficialTempo"
+          @update:bpm="bpm = $event"
+          @update:beats="beats = $event"
+          @update:accent-enabled="accentEnabled = $event"
+          @update:sound-preset="soundPreset = $event"
+          @toggle="toggle"
         />
-      </div>
+      </template>
 
-      <!-- Controls -->
-      <MetronomeControls
-        :bpm="bpm"
-        :beats="beats"
-        :is-playing="isPlaying"
-        :accent-enabled="accentEnabled"
-        :sound-preset="soundPreset"
-        :sound-presets="soundPresets"
-        :is-official-tempo="isOfficialTempo"
-        @update:bpm="bpm = $event"
-        @update:beats="beats = $event"
-        @update:accent-enabled="accentEnabled = $event"
-        @update:sound-preset="soundPreset = $event"
-        @toggle="toggle"
-      />
+      <!-- Tuner Tab -->
+      <template v-else>
+        <TunerDisplay
+          :note-name="detectedNote?.name ?? null"
+          :octave="detectedNote?.octave ?? null"
+          :cents="centsDeviation"
+          :frequency="detectedFrequency"
+          :is-listening="isListening"
+          :signal-strength="signalStrength"
+        />
+
+        <TunerControls
+          :mode="tunerMode"
+          :selected-tuning-id="selectedTuningId"
+          :selected-string-index="selectedStringIndex"
+          :detected-string-index="detectedStringIndex"
+          :current-tuning="currentTuning"
+          :reference-tone-enabled="referenceToneEnabled"
+          :is-listening="isListening"
+          @update:mode="setMode($event)"
+          @update:selected-tuning-id="setTuning($event)"
+          @update:selected-string-index="selectString($event)"
+          @update:reference-tone-enabled="referenceToneEnabled = $event"
+          @toggle="toggleTuning()"
+        />
+      </template>
     </main>
 
     <!-- Footer -->
