@@ -52,11 +52,12 @@ const { theme, toggleTheme } = useTheme()
 
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white flex flex-col transition-colors duration-200">
-    <!-- Theme Toggle -->
-    <div class="absolute top-4 right-4">
+    <!-- Header: Tabs + Theme Toggle -->
+    <div class="w-full max-w-md mx-auto pt-4 px-4 flex items-center gap-2">
+      <TabNavigation v-model:active-tab="activeTab" class="flex-1" />
       <button
         @click="toggleTheme"
-        class="p-2 rounded-lg bg-gray-200 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-800 transition-colors"
+        class="p-2 rounded-lg bg-gray-200 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-800 transition-colors shrink-0"
         :title="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
       >
         <!-- Sun icon (show in dark mode) -->
@@ -68,11 +69,6 @@ const { theme, toggleTheme } = useTheme()
           <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
       </button>
-    </div>
-
-    <!-- Tab Navigation -->
-    <div class="w-full max-w-md mx-auto pt-4 px-4">
-      <TabNavigation v-model:active-tab="activeTab" />
     </div>
 
     <!-- Main Content -->
